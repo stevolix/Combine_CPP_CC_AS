@@ -1,3 +1,4 @@
+[![ci](https://github.com/stevolix/Combine_CPP_CC_AS/actions/workflows/ci.yml/badge.svg)](https://github.com/stevolix/Combine_CPP_CC_AS/actions)
 ### This is a simple example for combining C++, C and Assembly in the same program.
 
 ## Purpose of this example

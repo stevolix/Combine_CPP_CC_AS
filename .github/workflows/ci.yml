@@ -1,0 +1,36 @@
+name: ci
+
+on: [push]
+
+jobs:
+  build_gcc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_config:
+          - { version: 11 }
+    container:
+      image: gcc:${{ matrix.build_config.version }}
+    name: "gcc-${{ matrix.build_config.version }}"
+    steps:
+      - uses: actions/checkout@main
+      - name: build
+        run: make
+      - name: run
+        run: make run
+      - name: CMake build and run using make
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential cmake
+          mkdir build_cmake && cd build_cmake && cmake -H../ -G"Unix Makefiles"
+          make -j
+          make run
+      - name: CMake build and run using ninja
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get -y install ninja-build
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential cmake
+          mkdir build_ninja && cd build_ninja && cmake -H../ -GNinja
+          ninja
+          ninja run
