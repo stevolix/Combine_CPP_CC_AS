@@ -5,6 +5,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 #include_directories(src/include)
 
+# set variables that list the source files
 set(CXX_MAIN_SOURCE "src/main.cpp")
 
 file(GLOB AS_SOURCES "src/*.S")
@@ -12,6 +13,7 @@ file(GLOB CC_SOURCES "src/*.c")
 file(GLOB CXX_SOURCES "src/*.cpp")
 list(FILTER CXX_SOURCES EXCLUDE REGEX ".*${CXX_MAIN_SOURCE}$")
 
+# set and define targets
 set(AS_LIBRARY ${CMAKE_PROJECT_NAME}_AS)
 set(CC_LIBRARY ${CMAKE_PROJECT_NAME}_CC)
 set(CXX_LIBRARY ${CMAKE_PROJECT_NAME}_CXX)
@@ -21,6 +23,7 @@ add_library(${CC_LIBRARY} STATIC ${CC_SOURCES})
 add_library(${CXX_LIBRARY} STATIC ${CXX_SOURCES})
 add_executable(${CMAKE_PROJECT_NAME} ${CXX_MAIN_SOURCE})
 
+# set compiler and linker options
 set(WFLAGS -Wall -Wall -pedantic -Wextra -Wconversion -Wfatal-errors)
 set(SFLAGS -fno-exceptions -fmessage-length=0 -fstack-usage) # -fstack-check
 set(PFLAGS )
@@ -32,10 +35,13 @@ set(CC_AOUTFLAGS -Wa,-adhln=$<TARGET_OBJECTS:${CC_LIBRARY}>.s)  # -fverbose-asm
 set(CXX_AOUTFLAGS -Wa,-adhln=$<TARGET_OBJECTS:${CXX_LIBRARY}>.s)  # -fverbose-asm 
 set(LDFLAGS )
 
+# set target compile options
 target_compile_options(${AS_LIBRARY} PRIVATE ${CFLAGS} ${OFLAGS} ${ASFLAGS} ${WFLAGS} ${SFLAGS} ${PFLAGS})
 target_compile_options(${CC_LIBRARY} PRIVATE ${CFLAGS} ${OFLAGS} ${WFLAGS} ${SFLAGS} ${PFLAGS} ${CC_AOUTFLAGS})
 target_compile_options(${CXX_LIBRARY} PRIVATE ${CXXFLAGS} ${OFLAGS} ${WFLAGS} ${SFLAGS} ${PFLAGS} ${CXX_AOUTFLAGS})
 target_link_libraries(${CMAKE_PROJECT_NAME} ${AS_LIBRARY} ${CC_LIBRARY} ${CXX_LIBRARY})
+
+# define custom post build command
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD 
     COMMAND objcopy --only-keep-debug $<TARGET_FILE:${CMAKE_PROJECT_NAME}> $<TARGET_FILE:${CMAKE_PROJECT_NAME}>.debug
     COMMAND strip $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
@@ -43,6 +49,8 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
     COMMAND size -d $<TARGET_FILE:${CMAKE_PROJECT_NAME}> >
     $<TARGET_FILE:${CMAKE_PROJECT_NAME}>.size)
 
-
-
-
+# define custome run target
+add_custom_target(run
+    COMMAND ${CMAKE_PROJECT_NAME}
+    DEPENDS ${CMAKE_PROJECT_NAME}
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})

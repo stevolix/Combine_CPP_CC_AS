@@ -8,9 +8,11 @@ The purpose of this code is to demonstrate how C++, C and Assembly can be used i
 * One external [Assembly file](src/subfunc3.S) with a very minimalistic Assembly subfunction (X86) that just returns
   3.
 * A basic [Makefile](Makefile) that can serve as basis for other programs.
+* An alternative basic [CMakeLists.txt](CMakeLists.txt) that can be used with CMake to generate a
+  build structure for make, ninja, etc.
 
-## About the Makefile
-The Makefile file has the following main sections:
+## About the provided Makefile
+The [Makefile](Makefile) file has the following main sections:
 * First the source variables are defined and some compiler options are defined for the subsequent
   steps.
 * Next, all src files are automatically included into the Makefile variables and a list of target
@@ -23,6 +25,17 @@ The Makefile file has the following main sections:
     utilised compilers are:
     * **CC** for C and Assembly.
     * **CXX** for C++.
+
+## About CMakeLists.txt
+If you use CMake, you may also alternatively use the provided CMake generator file [CMakeLists.txt](CMakeLists.txt) to generate a classical makefile:
+```
+mkdir build_cmake && cd build_cmake && cmake -H../ -G"Unix Makefiles"
+```
+or a ninja.build file:
+```
+mkdir build_cmake && cd build_cmake && cmake ../ -GNinja
+```
+etc.
 
 ## How to use this example
 The source code may be compiled using:
